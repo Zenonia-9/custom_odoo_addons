@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import _, api, fields, models, exceptions
 from datetime import date
 from dateutil.relativedelta import relativedelta
 
@@ -36,6 +36,16 @@ class EstateProperty(models.Model):
                    ('south', 'South'), 
                    ('east', 'East'), 
                    ('west', 'West')])
+    
+    @api.onchange('garden')
+    def _onchange_garden(self):
+        if self.garden:
+            self.garden_area = 10
+            self.garden_orientation = 'north'
+        else:
+            self.garden_area = 0
+            self.garden_orientation = None
+
     state = fields.Selection(
         string='Status',
         selection=[('new', 'New'),
@@ -45,7 +55,9 @@ class EstateProperty(models.Model):
                    ('cancelled', 'Cancelled')],
         required=True,
         copy=False,
-        default='new')
+        default='new',
+        readonly=True
+        )
     active = fields.Boolean(
         string='Active',
         default=True
@@ -56,7 +68,8 @@ class EstateProperty(models.Model):
     buyer_id = fields.Many2one(
         "res.partner",
         string="Buyer",
-        copy=False
+        copy=False,
+        readonly=True
     )
     salesman_id = fields.Many2one(
         "res.users",
@@ -71,3 +84,28 @@ class EstateProperty(models.Model):
         inverse_name='property_id',
         string='Offers'
     )
+    total_area = fields.Integer(compute='_compute_total_area')
+
+    @api.depends('living_area', 'garden_area', 'garden')
+    def _compute_total_area(self):
+        for record in self:
+            if record.garden:
+                record.total_area = record.living_area + record.garden_area
+            else:
+                record.total_area = record.living_area
+
+    def action_sold(self):
+        for record in self:
+            if record.state != 'cancelled':
+                record.state = 'sold'
+                return True
+            else:
+                raise exceptions.UserError(message="Cancelled properties cannot be sold.")
+    
+    def action_cancle(self):
+        for record in self:
+            if record.state != 'sold':
+                record.state = 'cancelled'
+                return True
+            else:
+                raise exceptions.UserError(message="Sold properties cannot be cancel.")

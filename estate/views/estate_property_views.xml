@@ -45,6 +45,10 @@
         <field name="model">estate.property</field>
         <field name="arch" type="xml">
             <form string="Properties">
+                <header>
+                    <button string="Sold" name="action_sold" type="object" class="oe_highlight"/>
+                    <button string="Cancle" name="action_cancle" type="object" class="oe_highlight"/>
+                </header>
                 <sheet>
                     <h1>
                         <field name="name"/>
@@ -53,6 +57,7 @@
                     <group>
                         <field name="tag_ids" widget="many2many_tags" />
                         <group>
+                            <field name="state" />
                             <field name="property_type_id"/>
                             <field name="postcode" />
                             <field name="date_availability" />
@@ -75,12 +80,12 @@
                                     <field name="living_area" />
                                     <field name="facades" />
                                     <field name="garage" />
+                                    <field name="garden" />
                                 </group>
                                 <group>
-                                    <field name="garden" />
                                     <field name="garden_area"/>
                                     <field name="garden_orientation"/>
-                                    <field name="state" />
+                                    <field name="total_area" />
                                 </group>
                             </group>
                         </page>
@@ -90,6 +95,10 @@
                                 <tree editable="bottom">
                                     <field name="price"/>
                                     <field name="partner_id"/>
+                                    <field name="validity" />
+                                    <field name="date_deadline" />
+                                    <button name="action_accept" help="Accept" type="object" class="oe_highlight" icon="fa-check"/>
+                                    <button name="action_refuse" help="Refuse" type="object" class="oe_highlight" icon="fa-times"/>
                                     <field name="status"/>
                                 </tree>
                             </field>
@@ -97,8 +106,8 @@
 
                         <page string="Other Info">
                             <group>
-                                <field name="buyer_id"/>
                                 <field name="salesman_id"/>
+                                <field name="buyer_id"/>
                             </group>
                         </page>
                     </notebook>
