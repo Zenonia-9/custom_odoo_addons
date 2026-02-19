@@ -32,7 +32,6 @@
                             name="group_property_type"
                             context="{'group_by': 'property_type_id'}"
                         />
-
                 </group>
 
             </search>
@@ -48,6 +47,7 @@
                 <header>
                     <button string="Sold" name="action_sold" type="object" class="oe_highlight"/>
                     <button string="Cancle" name="action_cancle" type="object" class="oe_highlight"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,received,accepted,sold"/>
                 </header>
                 <sheet>
                     <h1>
@@ -55,15 +55,15 @@
                     </h1>
 
                     <group>
-                        <field name="tag_ids" widget="many2many_tags" />
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
                         <group>
-                            <field name="state" />
-                            <field name="property_type_id"/>
+                            <field name="property_type_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}"/>
                             <field name="postcode" />
                             <field name="date_availability" />
                         </group>
                         <group>
                             <field name="expected_price" />
+                            <field name="best_price" />
                             <field name="selling_price" />
                         </group>
                     </group>

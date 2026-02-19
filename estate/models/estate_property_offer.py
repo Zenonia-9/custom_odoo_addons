@@ -5,6 +5,12 @@ class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'Real Estate Property Offer'
 
+    _sql_constraints = [
+        ('check_price', 'CHECK(price > 0)',
+         'The Offer price must be strictly positive.')
+    ]
+    _order = 'price desc'
+
     price = fields.Float()
     status = fields.Selection(
         selection=[('accepted', 'Accepted'),
@@ -63,12 +69,7 @@ class EstatePropertyOffer(models.Model):
                 ('id', '!=', offer.id)
             ])
 
-            accepted = False
-            for other_offer in other_offers:
-                if other_offer.status == 'accepted':
-                    accepted = True
-                else:
-                    continue
+            accepted = True if 'accepted' in other_offers.mapped('status') else False
 
             if not accepted:
                 offer.property_id.write({
