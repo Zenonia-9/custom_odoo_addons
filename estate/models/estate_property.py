@@ -11,7 +11,7 @@ class EstateProperty(models.Model):
     _sql_constraints = [
         ('check_expected_price', 'CHECK(expected_price > 0)',
          'The Expected price must be strictly positive.'),
-         ('check_selling_price', 'CHECK(selling_price > 0)',
+         ('check_selling_price', 'CHECK(selling_price >= 0)',
           'The Selling price must be positive.')
     ]
     _order = 'id desc'
@@ -88,6 +88,7 @@ class EstateProperty(models.Model):
     best_price = fields.Float(compute='_compute_best_price')
     total_area = fields.Integer(compute='_compute_total_area')
 
+
     @api.depends('offer_ids', 'offer_ids.price')
     def _compute_best_price(self):
         for record in self:
@@ -134,14 +135,3 @@ class EstateProperty(models.Model):
                 return True
             else:
                 raise UserError(message="Sold properties cannot be cancel.")
-
-    # @api.depends('offer_ids', 'offer_ids.status')  
-    # def _compute_state(self):
-    #     for record in self:
-    #         if record.state not in ['sold', 'cancelled']:
-    #             if record.offer_ids:
-    #                 record.state = 'received'
-    #                 if 'accepted' in record.offer_ids.mapped('offer_ids.status'):
-    #                     record.state = 'accepted'
-    #         else:
-    #             record.state = 'new'

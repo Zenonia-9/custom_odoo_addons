@@ -22,6 +22,11 @@ class EstatePropertyOffer(models.Model):
 
     partner_id = fields.Many2one('res.partner', required=True)
     property_id = fields.Many2one('estate.property', required=True)
+    property_type_id = fields.Many2one(
+        "estate.property.type",
+        related="property_id.property_type_id",
+        store=True
+    )
 
     validity = fields.Integer(
         string='Validity (days)',
@@ -32,7 +37,16 @@ class EstatePropertyOffer(models.Model):
         compute='_compute_date_deadline', 
         inverse='_inverse_date_deadline'
         )
+     
+    @api.model
+    def create(self, vals):
+        offer = super().create(vals)
 
+        if offer.property_id.state == 'new':
+            offer.property_id.state = 'received'
+
+        return offer
+    
     @api.depends('create_date', 'validity')
     def _compute_date_deadline(self):
         for record in self:
@@ -49,7 +63,8 @@ class EstatePropertyOffer(models.Model):
         for offer in self:
             offer.property_id.write({
                 'buyer_id': offer.partner_id.id,
-                'selling_price': offer.price
+                'selling_price': offer.price,
+                'state' : 'accepted'
             })
             offer.status = 'accepted'
 
@@ -74,7 +89,7 @@ class EstatePropertyOffer(models.Model):
             if not accepted:
                 offer.property_id.write({
                     'buyer_id': None,
-                    'selling_price': None
+                    'selling_price': 0
             })
 
         return True
