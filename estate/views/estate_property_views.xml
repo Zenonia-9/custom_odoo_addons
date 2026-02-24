@@ -50,18 +50,18 @@
                 </header>
                 <sheet>
                     <h1>
-                        <field name="name"/>
+                        <field name="name" readonly="state in ['sold', 'cancelled']"/>
                     </h1>
 
                     <group>
-                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                        <field name="tag_ids" widget="many2many_tags" readonly="state in ['sold', 'cancelled']" options="{'color_field': 'color'}"/>
                         <group>
-                            <field name="property_type_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}"/>
-                            <field name="postcode" />
-                            <field name="date_availability" />
+                            <field name="property_type_id" readonly="state in ['sold', 'cancelled']" options="{'no_create': True, 'no_edit': True, 'no_open': True}"/>
+                            <field name="postcode" readonly="state in ['sold', 'cancelled']" />
+                            <field name="date_availability" readonly="state in ['sold', 'cancelled']" />
                         </group>
                         <group>
-                            <field name="expected_price" />
+                            <field name="expected_price" readonly="state in ['sold', 'cancelled']" />
                             <field name="best_price" />
                             <field name="selling_price" />
                         </group>
@@ -70,21 +70,21 @@
                     <notebook>
                         <page string="Description">
                             <group>
-                                <field name="description" />
+                                <field name="description"  readonly="state in ['sold', 'cancelled']"/>
                             </group>
 
                             <group>
                                 <group>
-                                    <field name="bedrooms" />
-                                    <field name="living_area" />
-                                    <field name="facades" />
-                                    <field name="garden_area" invisible="not garden"/>
-                                    <field name="garden_orientation" invisible="not garden"/>
+                                    <field name="bedrooms" readonly="state in ['sold', 'cancelled']" />
+                                    <field name="living_area" readonly="state in ['sold', 'cancelled']" />
+                                    <field name="facades" readonly="state in ['sold', 'cancelled']" />
+                                    <field name="garden_area" readonly="state in ['sold', 'cancelled']" invisible="not garden"/>
+                                    <field name="garden_orientation" readonly="state in ['sold', 'cancelled']" invisible="not garden"/>
                                 </group>
                                 <group>
-                                    <field name="garage" />
-                                    <field name="garden" />
-                                    <field name="total_area" />
+                                    <field name="garage" readonly="state in ['sold', 'cancelled']" />
+                                    <field name="garden" readonly="state in ['sold', 'cancelled']" />
+                                    <field name="total_area" readonly="state in ['sold', 'cancelled']" />
                                 </group>
                             </group>
                         </page>

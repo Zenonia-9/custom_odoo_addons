@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models, exceptions
+from odoo import _, api, fields, models
 from odoo.tools.float_utils import float_compare
 from odoo.exceptions import ValidationError, UserError
 from datetime import date
@@ -88,6 +88,13 @@ class EstateProperty(models.Model):
     best_price = fields.Float(compute='_compute_best_price')
     total_area = fields.Integer(compute='_compute_total_area')
 
+    @api.ondelete(at_uninstall=False)
+    def _check_state_before_delete(self):
+        for record in self:
+            if record.state not in ('new', 'cancelled'):
+                raise UserError(
+                    "You can only delete properties in New or Cancelled state."
+                )
 
     @api.depends('offer_ids', 'offer_ids.price')
     def _compute_best_price(self):
