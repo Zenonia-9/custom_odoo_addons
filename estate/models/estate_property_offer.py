@@ -1,16 +1,16 @@
 from datetime import timedelta
-from odoo import _, api, fields, models
-from odoo.exceptions import UserError   
+from odoo import api, fields, models
+from odoo.exceptions import UserError
+
 
 class EstatePropertyOffer(models.Model):
     _name = 'estate.property.offer'
     _description = 'Real Estate Property Offer'
-
+    _order = 'price desc'
     _sql_constraints = [
         ('check_price', 'CHECK(price > 0)',
          'The Offer price must be strictly positive.')
     ]
-    _order = 'price desc'
 
     price = fields.Float()
     status = fields.Selection(
@@ -20,7 +20,6 @@ class EstatePropertyOffer(models.Model):
         copy=False,
         readonly=True
     )
-
     partner_id = fields.Many2one('res.partner', required=True)
     property_id = fields.Many2one('estate.property', required=True)
     property_type_id = fields.Many2one(
@@ -28,7 +27,6 @@ class EstatePropertyOffer(models.Model):
         related="property_id.property_type_id",
         store=True
     )
-
     validity = fields.Integer(
         string='Validity (days)',
         default=7
@@ -38,7 +36,7 @@ class EstatePropertyOffer(models.Model):
         compute='_compute_date_deadline', 
         inverse='_inverse_date_deadline'
         )
-     
+    
     @api.model
     def create(self, vals):
 
@@ -103,7 +101,8 @@ class EstatePropertyOffer(models.Model):
             if not accepted:
                 offer.property_id.write({
                     'buyer_id': None,
-                    'selling_price': 0
+                    'selling_price': 0,
             })
 
         return True
+    
